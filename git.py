@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 
-import os, sys
 import imp
 import time
 import json
 import queue
 import base64
 import random
+import os, sys
 import getpass
 import threading
 
