@@ -10,7 +10,7 @@ import os, sys
 import getpass
 import threading
 
-# BUG fix for a 'stupid' function in Python internals 
+# BUG fix for a 'STUPID' function in Python internals 
 # called PyImport_ImportModuleNoBlock() triggered by
 # datetime.strptime(time_str, __timeformat__) 
 # in module 'github3/models.py'

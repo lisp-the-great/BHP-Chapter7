@@ -2,7 +2,7 @@
 
 import os
 
-def run(**kwargs):
-    print('[*] In listdir module.')
+def run():
+    print('[*] In listdir module')
     files = os.listdir('.')
     return str(files)

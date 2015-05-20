@@ -2,6 +2,6 @@
 
 import os
 
-def run(**kwargs):
-    print('[*] In environ module.')
+def run():
+    print('[*] In environ module')
     return str(os.environ)
